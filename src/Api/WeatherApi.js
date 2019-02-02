@@ -8,10 +8,10 @@ export class WeatherApi extends Api {
 
         this.getForecast = this.getForecast.bind(this);
     }
-    
+
     getForecast(data) {
         Object.assign(data, { appid: token });
-        return this.get('http://api.openweathermap.org/data/2.5/forecast/', { params: data }).then((res) => {
+        return this.get('https://api.openweathermap.org/data/2.5/forecast/', { params: data }).then((res) => {
             return res;
         });
     }

@@ -4,7 +4,7 @@ import WeatherApi           from './Api/WeatherApi';
 import DailySummary         from './Components/Weather/DailySummary';
 import './App.scss';
 
-const hasPrecipitated = (weather) => ['Rain', 'Snow'].indexOf(weather) > -1;
+const hasPrecipitated = (weathers) => weathers.reduce((precipitated, weather) => (['Rain', 'Snow'].indexOf(weather.main) > -1 || precipitated), false);
 
 class App extends Component {
     constructor() {
@@ -12,11 +12,20 @@ class App extends Component {
 
         this.validateZipCode = this.validateZipCode.bind(this);
         this.getForecast = this.getForecast.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
 
         this.state = {
             zipcode: {},
             forecast: [],
         };
+    }
+
+    handleKeyPress(e) {
+        this.validateZipCode(e);
+
+        if (e.key === 'Enter') {
+            this.getForecast()
+        }
     }
 
     validateZipCode(e) {
@@ -42,13 +51,13 @@ class App extends Component {
                     forecasts[date.toDateString()] = {
                         high: Math.max(forecasts[date.toDateString()].high, forecast.main.temp_max),
                         low: Math.min(forecasts[date.toDateString()].low, forecast.main.temp_min),
-                        precipitated: forecasts[date.toDateString()].precipitated || hasPrecipitated(forecast.weather.main),
+                        precipitated: forecasts[date.toDateString()].precipitated || hasPrecipitated(forecast.weather),
                     }
                 } else {
                     forecasts[date.toDateString()] = {
                         high: forecast.main.temp_max,
                         low: forecast.main.temp_min,
-                        precipitated: hasPrecipitated(forecast.weather.main),
+                        precipitated: hasPrecipitated(forecast.weather),
                     }
                 }
                 return forecasts;
@@ -60,9 +69,9 @@ class App extends Component {
     render() {
         return (
             <div className="App container">
-                <div class="input-group mb-3">
-                    <input className="form-control" onBlur={ this.validateZipCode } />
-                    <div class="input-group-append">
+                <div className="input-group mb-3">
+                    <input className="form-control" onBlur={ this.validateZipCode } onKeyPress={this.handleKeyPress} />
+                    <div className="input-group-append">
                         <button className="btn btn-primary" onClick={ this.getForecast }>Submit</button>
                     </div>
                     { !this.state.zipcode.valid && this.state.zipcode.value ?
@@ -72,7 +81,7 @@ class App extends Component {
                 </div>
                 <div className="row">
                     { Object.keys(this.state.forecast).map(date =>
-                        <div className="col-2">
+                        <div className="col-2" key={date}>
                             <DailySummary date={ date } { ...this.state.forecast[date] } />
                         </div>
                     )}

@@ -1,4 +1,4 @@
-import axiosLib              from 'axios';
+import axiosLib  from 'axios';
 
 const axios = axiosLib.create({
     xsrfCookieName: 'csrftoken',
