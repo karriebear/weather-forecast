@@ -13,19 +13,19 @@ const defaultProps = {
     precipitated: false,
 };
 
-const DailySummary = ({ date, high, low, precipitated }) => (
+const DailySummary = ({ date, high, low, precipitated, unitDisplay }) => (
     <div className="card">
         <div className="card-body">
             <label className="card-title">{ date }</label>
             <div>
                 <label>High:</label>
-                <span>{ high }</span>
+                <span>{ high[unitDisplay] }</span>
             </div>
             <div>
                 <label>Low:</label>
-                <span>{ low }</span>
+                <span>{ low[unitDisplay] }</span>
             </div>
-            { precipitated ? <div>Rained<i className="far fa-cloud-rain" /> </div>: null }
+            { precipitated ? <div>Rained 🌧 </div>: null }
         </div>
     </div>
 )
